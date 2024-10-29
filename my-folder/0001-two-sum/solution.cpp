@@ -2,20 +2,21 @@ class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
         vector<int> solution;
-        unordered_map<int, int> potential_targets;
-        for (int i = 0, n = nums.size(); i < n; ++i)
-        {
-            potential_targets.insert({target - nums[i], i});
-            if (potential_targets.contains(nums[i]))
-            {
-                int other = potential_targets[nums[i]];
-                if (i != other)
-                {
-                    solution = {i, other};
+        unordered_map<int, int> targets;
+        for (int index = 0; index < nums.size(); ++index) {
+            targets[target - nums[index]] = index;
+        }
+
+        for (int index = 0; index < nums.size(); ++index) {
+            if (targets.contains(nums[index])) {
+                if (index != targets[nums[index]]) {
+                    solution.push_back(index);
+                    solution.push_back(targets[nums[index]]);
                     return solution;
                 }
             }
         }
+
         return solution;
     }
 };
