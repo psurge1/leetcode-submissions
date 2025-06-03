@@ -14,19 +14,22 @@
  * }
  */
 class Solution {
-    public boolean isBalanced(TreeNode root) {
-        if (root == null)
-            return true;
-
-        if (Math.abs(depth(root.right) - depth(root.left)) > 1)
-            return false;
-
-        return isBalanced(root.right) && isBalanced(root.left);
+    class DFSResult {
+        public int depth;
+        public boolean isBalanced;
+        public DFSResult (int depth, boolean isBalanced) {this.depth = depth; this.isBalanced = isBalanced;}
     }
 
-    public int depth(TreeNode root) {
-        if (root == null)
-            return 0;
-        return 1 + Math.max(depth(root.right), depth(root.left));
+    public boolean isBalanced(TreeNode root) {
+        return dfs(root, 1).isBalanced;
+    }
+
+    public DFSResult dfs(TreeNode root, int depth) {
+        if (root == null) {
+            return new DFSResult(depth, true);
+        }
+        DFSResult leftResult = dfs(root.left, depth + 1);
+        DFSResult rightResult = dfs(root.right, depth + 1);
+        return new DFSResult(Math.max(leftResult.depth, rightResult.depth), leftResult.isBalanced && rightResult.isBalanced && Math.abs(leftResult.depth - rightResult.depth) <= 1);
     }
 }
