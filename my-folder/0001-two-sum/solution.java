@@ -1,17 +1,14 @@
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        int[] twos = new int[2];
-        for (int i = 0; i < nums.length; ++i)
-        {
-            for (int k = i + 1; k < nums.length; ++k)
-            {
-                if (nums[i] + nums[k] == target)
-                {
-                    twos[0] = i;
-                    twos[1] = k;
-                }
-            }
+        Map<Integer, Integer> numTracker = new HashMap<>();
+        for (int i = 0; i < nums.length; ++i) {
+            int complement = target - nums[i];
+            int complementIndex = numTracker.getOrDefault(complement, -1);
+            if (complementIndex == -1)
+                numTracker.put(nums[i], i);
+            else
+                return new int[]{complementIndex, i};
         }
-        return twos;
+        return new int[]{-1, -1};
     }
 }
