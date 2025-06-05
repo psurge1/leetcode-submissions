@@ -14,33 +14,47 @@
  * }
  */
 class Solution {
-    HashMap<Integer, Integer> numCount = new HashMap<>();
+    Integer maxCount;
+    List<Integer> maxNums;
+    Integer currentCount;
+    Integer currentNum;
     public int[] findMode(TreeNode root) {
+        maxCount = 0;
+        currentCount = 0;
+        currentNum = 0;
+        maxNums = new ArrayList<>();
+
         dfs(root);
-        List<Integer> sols = new ArrayList<>();
-        int runningMaxCount = 0;
-        for (Map.Entry<Integer, Integer> entry : numCount.entrySet()) {
-            if (entry.getValue() > runningMaxCount) {
-                sols.clear();
-                sols.add(entry.getKey());
-                runningMaxCount = entry.getValue();
-            }
-            else if (entry.getValue() == runningMaxCount) {
-                sols.add(entry.getKey());
-            }
+        int[] result = new int[maxNums.size()];
+        for (int i = 0; i < maxNums.size(); ++i) {
+            result[i] = maxNums.get(i);
         }
-        int[] solution = new int[sols.size()];
-        for (int i = 0; i < sols.size(); ++i) {
-            solution[i] = sols.get(i);
-        }
-        return solution;
+        return result;
     }
 
     public void dfs(TreeNode root) {
         if (root ==  null)
             return;
-        numCount.put(root.val, numCount.getOrDefault(root.val, 0) + 1);
+        
         dfs(root.left);
+
+        if (root.val == currentNum) {
+            ++currentCount;
+        }
+        else {
+            currentCount = 1;
+            currentNum = root.val;
+        }
+
+        if (currentCount == maxCount) {
+            maxNums.add(currentNum);
+        }
+        else if (currentCount > maxCount) {
+            maxNums.clear();
+            maxNums.add(currentNum);
+            maxCount = currentCount;
+        }
+        
         dfs(root.right);
     }
 }
