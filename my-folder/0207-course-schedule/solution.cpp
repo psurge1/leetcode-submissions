@@ -1,42 +1,33 @@
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        vector<vector<int>> adjList(numCourses, vector<int>());
-        vector<bool> visited(numCourses, false);
-        
-        for (const vector<int>& prereq : prerequisites) {
-            adjList[prereq[1]].push_back(prereq[0]);
+        vector<vector<int>> adjList(numCourses);
+        vector<int> indegree(numCourses, 0);
+
+        for (const auto& prereq : prerequisites) {
+            adjList[prereq[0]].push_back(prereq[1]);
+            ++indegree[prereq[1]];
         }
 
-        return !cycleDetected(adjList, numCourses);
-    }
-
-    bool cycleDetected(const vector<vector<int>>& adjList, int numNodes) {
-        vector<int> incomingEdges(numNodes, 0);
-        for (const vector<int>& node : adjList) {
-            for (int edgeNode : node) {
-                ++incomingEdges[edgeNode];
-            }
+        deque<int> dq;
+        for (int course = 0; course < numCourses; ++course) {
+            if (indegree[course] == 0)
+                dq.emplace_back(course);
         }
-        stack<int> rootNodes;
-        for (int node = 0; node < numNodes; ++node) {
-            if (incomingEdges[node] == 0) {
-                rootNodes.push(node);
-            }
-        }
-        int count = 0;
-        while (rootNodes.size() != 0) {
-            ++count;
-            int rootNode = rootNodes.top();
-            rootNodes.pop();
 
-            for (int edgeNode : adjList[rootNode]) {
-                if (--incomingEdges[edgeNode] == 0){
-                    rootNodes.push(edgeNode);
-                }
+        vector<int> ordering;
+        while (!dq.empty()) {
+            int course = dq.front();
+            dq.pop_front();
+            ordering.push_back(course);
+
+            for (int edgeNode : adjList[course]) {
+                --indegree[edgeNode];
+                if (indegree[edgeNode] == 0)
+                    dq.push_back(edgeNode);
             }
         }
 
-        return count != numNodes;
+        return ordering.size() == numCourses;
     }
 };
